@@ -23,7 +23,7 @@ func (h *Handler) WebShowTodos() http.HandlerFunc {
 		todos, err := h.Store.GetTodos()
 		data.Content = todos
 
-		tmpl, err := template.ParseFiles("templates/layout.html", "templates/list.html")
+		tmpl, err := template.ParseFiles("templates/layout.gohtml", "templates/list.gohtml")
 		if err != nil {
 			http.Error(writer, err.Error(), http.StatusInternalServerError)
 		}
@@ -40,7 +40,7 @@ func (h *Handler) WebCreateTodoForm() http.HandlerFunc {
 	data := TemplateData{Titre: "Add a todo"}
 
 	return func(writer http.ResponseWriter, request *http.Request) {
-		tmpl, err := template.ParseFiles("templates/layout.html", "templates/form.html")
+		tmpl, err := template.ParseFiles("templates/layout.gohtml", "templates/form.gohtml")
 		if err != nil {
 			http.Error(writer, err.Error(), http.StatusInternalServerError)
 		}
