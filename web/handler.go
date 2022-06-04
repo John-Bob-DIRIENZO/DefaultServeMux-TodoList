@@ -1,15 +1,15 @@
 package web
 
 import (
-	"demoHTTP"
+	database "demoHTTP/mysql"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 )
 
-func NewHandler(todos []demoHTTP.TodoItem) *Handler {
+func NewHandler(store *database.Store) *Handler {
 	handler := &Handler{
 		chi.NewRouter(),
-		todos,
+		store,
 	}
 
 	handler.Use(middleware.Logger)
@@ -17,11 +17,12 @@ func NewHandler(todos []demoHTTP.TodoItem) *Handler {
 	handler.Get("/", handler.GetTodos())
 	handler.Post("/", handler.AddTodo())
 	handler.Delete("/{id}", handler.DeleteTodo())
+	handler.Patch("/{id}", handler.ToggleTodo())
 
 	return handler
 }
 
 type Handler struct {
 	*chi.Mux
-	Todos []demoHTTP.TodoItem
+	*database.Store
 }

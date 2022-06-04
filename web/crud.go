@@ -13,10 +13,8 @@ func (h *Handler) GetTodos() http.HandlerFunc {
 		// Je vais sortir un JSON, je rajoute le header correspondant
 		writer.Header().Set("Content-Type", "application/json")
 
-		// NewEncoder va me permettre de transformer un struct en JSON.
-		// Je dois juste lui préciser où encoder (writter)
-		// et quoi encoder (h.Todos, ma liste de todos)
-		err := json.NewEncoder(writer).Encode(h.Todos)
+		todos, _ := h.Store.GetTodos()
+		err := json.NewEncoder(writer).Encode(todos)
 		if err != nil {
 			http.Error(writer, err.Error(), http.StatusInternalServerError)
 			return
@@ -26,10 +24,6 @@ func (h *Handler) GetTodos() http.HandlerFunc {
 
 func (h *Handler) AddTodo() http.HandlerFunc {
 	return func(writer http.ResponseWriter, request *http.Request) {
-		if request.Method != "POST" {
-			http.Error(writer, "cette route n'est disponible qu'en POST", http.StatusBadRequest)
-			return
-		}
 
 		item := demoHTTP.TodoItem{}
 		err := json.NewDecoder(request.Body).Decode(&item)
@@ -37,16 +31,21 @@ func (h *Handler) AddTodo() http.HandlerFunc {
 			http.Error(writer, err.Error(), http.StatusInternalServerError)
 			return
 		}
-		h.Todos = append(h.Todos, item)
 
-		// Je crée une struct anonyme à laquelle j'ajoute
-		// tout de suite un contenu que je renvoie en JSON
+		id, err := h.Store.AddTodo(item)
+		if err != nil {
+			http.Error(writer, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
 		err = json.NewEncoder(writer).Encode(struct {
-			Status  string `json:"status"`
-			Message string `json:"message"`
+			Status    string `json:"status"`
+			Message   string `json:"message"`
+			NewTodoId int    `json:"newTodoId"`
 		}{
-			Status:  "success",
-			Message: "Nouveau todo inséré avec succès",
+			Status:    "success",
+			Message:   "Nouveau todo inséré avec succès",
+			NewTodoId: id,
 		})
 		if err != nil {
 			http.Error(writer, err.Error(), http.StatusInternalServerError)
@@ -57,16 +56,28 @@ func (h *Handler) AddTodo() http.HandlerFunc {
 
 func (h *Handler) DeleteTodo() http.HandlerFunc {
 	return func(writer http.ResponseWriter, request *http.Request) {
-		// Ce routeur me permet d'accéder facilement aux paramètres
 		QueryId := chi.URLParam(request, "id")
-		// Attention, ce sont toujours des strings...
 		id, _ := strconv.Atoi(QueryId)
 
-		for index, todo := range h.Todos {
-			if id == todo.ID {
-				h.Todos = append(h.Todos[:index], h.Todos[index+1:]...)
-				break
-			}
+		err := h.Store.DeleteTodo(id)
+		if err != nil {
+			http.Error(writer, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		http.Redirect(writer, request, "/", http.StatusSeeOther)
+	}
+}
+
+func (h *Handler) ToggleTodo() http.HandlerFunc {
+	return func(writer http.ResponseWriter, request *http.Request) {
+		QueryId := chi.URLParam(request, "id")
+		id, _ := strconv.Atoi(QueryId)
+
+		err := h.Store.ToggleTodo(id)
+		if err != nil {
+			http.Error(writer, err.Error(), http.StatusInternalServerError)
+			return
 		}
 
 		http.Redirect(writer, request, "/", http.StatusSeeOther)
