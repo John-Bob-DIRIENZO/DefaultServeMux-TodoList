@@ -1,6 +1,9 @@
-# DefaultServeMux-TodoList
+# Chi Router-TodoList
 
-Une Todo List en GO, avec le Mux standard pour bien comprendre comment les choses se passent
+Une Todo List en GO, avec le Mux Chi
+
+Tout se passe sur le port 8097
+
 
 Pour le lancer :
 ```shell

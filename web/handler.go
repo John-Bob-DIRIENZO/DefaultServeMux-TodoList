@@ -2,26 +2,26 @@ package web
 
 import (
 	"demoHTTP"
-	"net/http"
+	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/chi/v5/middleware"
 )
 
 func NewHandler(todos []demoHTTP.TodoItem) *Handler {
 	handler := &Handler{
-		http.NewServeMux(),
+		chi.NewRouter(),
 		todos,
 	}
 
-	handler.Handle("/", handler.GetTodos())
-	handler.Handle("/add", handler.AddTodo())
-	// Le "/" à la fin est important, sinon le routeur ne
-	// comprend pas qu'il y aura des choses après "delete"
-	// hors, nous voulons faire "/delete/{id}"
-	handler.Handle("/delete/", handler.DeleteTodo())
+	handler.Use(middleware.Logger)
+
+	handler.Get("/", handler.GetTodos())
+	handler.Post("/", handler.AddTodo())
+	handler.Delete("/{id}", handler.DeleteTodo())
 
 	return handler
 }
 
 type Handler struct {
-	*http.ServeMux
+	*chi.Mux
 	Todos []demoHTTP.TodoItem
 }
