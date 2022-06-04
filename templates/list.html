@@ -1,11 +1,17 @@
 {{define "content"}}
 <ul class="list-group">
     {{ range .Content }}
-    <li class="list-group-item d-flex justify-content-between align-items-center {{if .Completed}}active{{end}}">
+    <li class="list-group-item d-flex justify-content-between align-items-center
+            {{if .Completed}}active{{end}}">
+
         <div>{{.Title}}</div>
         <div>
-            <a class="btn btn-success" href="/toggle-todo/{{.ID}}">{{if not .Completed}}Done !{{else}}Undo !{{end}}</a>
-            <a class="btn btn-danger" href="/delete-todo/{{.ID}}">Delete</a>
+            <a class="btn btn-success" href="/toggle-todo/{{.ID}}">
+                {{if not .Completed}}Done !{{else}}Undo !{{end}}
+            </a>
+            <a class="btn btn-danger" href="/delete-todo/{{.ID}}">
+                Delete
+            </a>
         </div>
     </li>
     {{end}}

@@ -14,6 +14,9 @@ type TemplateData struct {
 }
 
 func (h *Handler) WebShowTodos() http.HandlerFunc {
+	// Placer cette déclaration avant de retourner le handler
+	// permet de ne créer qu'une seule fois cette struct
+	// plutôt que de la créer à chaque requête
 	data := TemplateData{Titre: "Tous les todos"}
 
 	return func(writer http.ResponseWriter, request *http.Request) {
