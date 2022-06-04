@@ -65,7 +65,7 @@ func (h *Handler) DeleteTodo() http.HandlerFunc {
 			return
 		}
 
-		http.Redirect(writer, request, "/", http.StatusSeeOther)
+		http.Redirect(writer, request, "/api", http.StatusSeeOther)
 	}
 }
 
@@ -80,6 +80,6 @@ func (h *Handler) ToggleTodo() http.HandlerFunc {
 			return
 		}
 
-		http.Redirect(writer, request, "/", http.StatusSeeOther)
+		http.Redirect(writer, request, "/api", http.StatusSeeOther)
 	}
 }

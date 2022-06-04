@@ -14,10 +14,18 @@ func NewHandler(store *database.Store) *Handler {
 
 	handler.Use(middleware.Logger)
 
-	handler.Get("/", handler.GetTodos())
-	handler.Post("/", handler.AddTodo())
-	handler.Delete("/{id}", handler.DeleteTodo())
-	handler.Patch("/{id}", handler.ToggleTodo())
+	handler.Get("/", handler.WebShowTodos())
+	handler.Get("/create-todo", handler.WebCreateTodoForm())
+	handler.Post("/add-todo", handler.WebAddTodo())
+	handler.Get("/toggle-todo/{id}", handler.WebToogleTodo())
+	handler.Get("/delete-todo/{id}", handler.WebDeleteTodo())
+
+	handler.Route("/api", func(r chi.Router) {
+		r.Get("/", handler.GetTodos())
+		r.Post("/", handler.AddTodo())
+		r.Delete("/{id}", handler.DeleteTodo())
+		r.Patch("/{id}", handler.ToggleTodo())
+	})
 
 	return handler
 }

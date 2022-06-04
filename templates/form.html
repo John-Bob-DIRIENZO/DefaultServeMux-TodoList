@@ -1,0 +1,14 @@
+{{define "content"}}
+<form action="/add-todo" method="post">
+    <div class="mb-3">
+        <label for="exampleInputEmail1" class="form-label">What do you want to do ?</label>
+        <input type="text" name="new-todo" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
+        <div id="emailHelp" class="form-text">Event though we all know you won't do it anytime soon</div>
+    </div>
+    <button type="submit" class="btn btn-primary">Submit</button>
+</form>
+{{end}}
+
+
+
+
