@@ -23,7 +23,9 @@ func (h *Handler) WebShowTodos() http.HandlerFunc {
 		todos, err := h.Store.GetTodos()
 		data.Content = todos
 
-		tmpl, err := template.ParseFiles("templates/layout.gohtml", "templates/list.gohtml")
+		// ParseFS fonctionne exactement comme ParseFiles mais va chercher
+		// dans un fileSystem donné plutôt que dans celui de l'hôte
+		tmpl, err := template.ParseFS(demoHTTP.EmbedTemplates, "templates/layout.gohtml", "templates/list.gohtml")
 		if err != nil {
 			http.Error(writer, err.Error(), http.StatusInternalServerError)
 		}
@@ -40,7 +42,7 @@ func (h *Handler) WebCreateTodoForm() http.HandlerFunc {
 	data := TemplateData{Titre: "Add a todo"}
 
 	return func(writer http.ResponseWriter, request *http.Request) {
-		tmpl, err := template.ParseFiles("templates/layout.gohtml", "templates/form.gohtml")
+		tmpl, err := template.ParseFS(demoHTTP.EmbedTemplates, "templates/layout.gohtml", "templates/form.gohtml")
 		if err != nil {
 			http.Error(writer, err.Error(), http.StatusInternalServerError)
 		}
