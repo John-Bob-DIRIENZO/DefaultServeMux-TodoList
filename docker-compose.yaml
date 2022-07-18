@@ -9,14 +9,32 @@ services:
         volumes:
             - ./migrations/01-create-table.up.sql:/docker-entrypoint-initdb.d/migration.sql
         environment:
-            MARIADB_ROOT_PASSWORD: password
-            MARIADB_DATABASE: todo
+            MARIADB_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD:-password}
+            MARIADB_DATABASE: ${MARIADB_DATABASE:-todo}
+        healthcheck:
+            test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p$MARIADB_ROOT_PASSWORD" ]
+            interval: 5s
+            timeout: 5s
+            retries: 5
+
+    go-api:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        restart: on-failure
+        environment:
+            MARIADB_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD:-password}
+            MARIADB_DATABASE: ${MARIADB_DATABASE:-todo}
+        ports:
+            - "8097:8097"
+        depends_on:
+            database:
+                condition: service_healthy
 
     adminer:
         image: adminer
         restart: always
         ports:
             - "8080:8080"
-
 
 

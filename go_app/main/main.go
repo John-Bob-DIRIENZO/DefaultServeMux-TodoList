@@ -8,15 +8,16 @@ import (
 	"github.com/go-sql-driver/mysql"
 	"log"
 	"net/http"
+	"os"
 )
 
 func main() {
 	conf := mysql.Config{
 		User:                 "root",
-		Passwd:               "password",
+		Passwd:               os.Getenv("MARIADB_ROOT_PASSWORD"),
 		Net:                  "tcp",
-		Addr:                 "localhost:3306",
-		DBName:               "todo",
+		Addr:                 "database:3306",
+		DBName:               os.Getenv("MARIADB_DATABASE"),
 		AllowNativePasswords: true, // Il faut le préciser
 	}
 
